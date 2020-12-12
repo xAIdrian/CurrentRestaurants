@@ -1,0 +1,18 @@
+query BusinessDetailsQuery($businessID: String!){
+    business(id: $businessID) {
+        id
+        name
+        display_phone
+        review_count
+        rating
+        price
+        location {
+            formatted_address
+        }
+        coordinates {
+            latitude
+            longitude
+        }
+        photos
+    }
+}
