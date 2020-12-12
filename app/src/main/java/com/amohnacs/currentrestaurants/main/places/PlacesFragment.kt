@@ -1,4 +1,4 @@
-package com.amohnacs.currentrestaurants
+package com.amohnacs.currentrestaurants.main.places
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.amohnacs.currentrestaurants.R
 
 class PlacesFragment : Fragment() {
 
     companion object {
-        fun newInstance() = PlacesFragment()
+        fun newInstance() =
+            PlacesFragment()
     }
 
     private lateinit var viewModel: PlacesViewModel

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -38,4 +39,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    implementation "com.google.dagger:dagger:$rootProject.dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.dagger_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutine_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidx_lifecycle"
+    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.androidx_navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.androidx_navigation"
 }

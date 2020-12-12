@@ -1,4 +1,4 @@
-package com.amohnacs.currentrestaurants
+package com.amohnacs.currentrestaurants.main.places
 
 import androidx.lifecycle.ViewModel
 
