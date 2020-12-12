@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CurrentRestaurants</string>
+    <string name="error_permission">You do not have permission to access location</string>
 </resources>

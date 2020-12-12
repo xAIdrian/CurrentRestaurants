@@ -1,6 +1,6 @@
-package com.amohnacs.currentrestaurants.dagger
+package com.amohnacs.currentrestaurants.main
 
-import com.amohnacs.currentrestaurants.main.MainActivity
+import com.amohnacs.currentrestaurants.dagger.scopes.ActivityScope
 import dagger.Subcomponent
 
 @ActivityScope

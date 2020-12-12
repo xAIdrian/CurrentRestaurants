@@ -1,4 +1,4 @@
-package com.amohnacs.currentrestaurants.dagger
+package com.amohnacs.currentrestaurants.dagger.scopes
 
 import javax.inject.Scope
 

@@ -23,6 +23,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -45,4 +53,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidx_lifecycle"
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.androidx_navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.androidx_navigation"
+
+    implementation "com.google.android.gms:play-services-location:$rootProject.gmsVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroid"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJava"
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$rootProject.rxAdapter"
 }
