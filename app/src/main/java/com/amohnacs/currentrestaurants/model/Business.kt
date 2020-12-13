@@ -3,12 +3,13 @@ package com.amohnacs.currentrestaurants.model
 data class Business(
     val id: String,
     val name: String,
-    val displayPhone: String,
-    val reviewCount: Int,
-    val rating: Float,
-    val location: YelpLocation,
+    val displayPhone: String? = null,
+    val reviewCount: Int? = null,
+    val rating: Double,
+    val location: YelpLocation? = null,
     val coordinates: YelpCoordinates,
-    val photos: List<String>
+    val photos: List<String?>,
+    val price: String
 )
 
 data class YelpLocation(
@@ -16,6 +17,6 @@ data class YelpLocation(
 )
 
 data class YelpCoordinates(
-    val latitude: Float,
-    val longitude: Float
+    val latitude: Double,
+    val longitude: Double
 )

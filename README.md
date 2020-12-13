@@ -22,3 +22,4 @@
 - retrofit
 - rxjava
 - @FormUrlEncoded with retrofit2
+- viewmodel factory and providers

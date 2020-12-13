@@ -2,7 +2,8 @@ query SearchQuery(
     $radius: Float!,
     $latitude: Float!,
     $longitude: Float!,
-    $offset:Int!,$term:String!
+    $offset:Int!,
+    $term:String!
 ) {
     search(
         term: $term,
