@@ -1,10 +1,8 @@
 package com.amohnacs.currentrestaurants.domain
 
-import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.rx2.Rx2Apollo
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import yelpQL.SearchQuery
 import javax.inject.Inject
 
@@ -27,13 +25,12 @@ class YelpRepository @Inject constructor(
             longitude,
             0,
             BURRITO_QUERY_TERM
-        ) as ApolloCall<SearchQuery.Data>
-
-        return Rx2Apollo.from(query).subscribeOn(Schedulers.io())
+        )
+        return Rx2Apollo.from(query)
     }
 
     companion object {
-        const val BURRITO_RADIUS = 12.0
+        const val BURRITO_RADIUS = 19200.0
         const val BURRITO_QUERY_TERM = "burrito"
     }
 }

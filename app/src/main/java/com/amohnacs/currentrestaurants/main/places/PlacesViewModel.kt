@@ -23,54 +23,47 @@ class PlacesViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun getBurritoPlaces() {
-        yelpRepository.getBurritoSearchResults(
-            locationManager.lastFetchedLocation?.latitude ?: 20.0,
-            locationManager.lastFetchedLocation?.longitude ?: 40.0
-        ).observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Log.e("tester", it.toString())
+        locationManager.getUsersLastLocation()
+            .flatMapObservable {
+                yelpRepository.getBurritoSearchResults(
+                    it.latitude,
+                    it.longitude
+                )
+            }.doOnError{
+                // TODO: 12/14/20  
+                Log.e("error", it.message.toString())
             }
-//        locationManager.getUsersLastLocation()
-//            .flatMapObservable {
-//                yelpRepository.getBurritoSearchResults(
-//                    it.latitude,
-//                    it.longitude
-//                )
-//            }.doOnError{
-//                Log.e("error", it.message.toString())
-//            }
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe(
-//                { response ->
-//                    if (!response.hasErrors()) {
-//                        // TODO: 12/12/20
-//                        Log.e("error", "response has errors")
-//                    } else {
-//                        val businessList = ArrayList<Business>()
-//                        response.data?.search?.business?.forEach {
-//                            businessList.add(
-//                                Business(
-//                                    id = it?.id ?: "",
-//                                    name = it?.name ?: "",
-//                                    price = it?.price ?: "",
-//                                    rating = it?.rating ?: 0.0,
-//                                    coordinates = YelpCoordinates(
-//                                        it?.coordinates?.latitude ?: 0.0,
-//                                        it?.coordinates?.longitude ?: 0.0
-//                                    ),
-//                                    photos = it?.photos ?: emptyList<String>()
-//                                )
-//                            )
-//                        }
-//                        businesses.postValue(businessList)
-//                    }
-//                },
-//                {
-//                    // TODO: 12/12/20
-//                    Log.e("error", it.message.toString())
-//                }
-//            )
-
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { response ->
+                    if (response.hasErrors()) {
+                        // TODO: 12/12/20
+                        Log.e("error", "response has errors")
+                    } else {
+                        val businessList = ArrayList<Business>()
+                        response.data?.search?.business?.forEach {
+                            businessList.add(
+                                Business(
+                                    id = it?.id ?: "",
+                                    name = it?.name ?: "",
+                                    price = it?.price ?: "",
+                                    rating = it?.rating ?: 0.0,
+                                    coordinates = YelpCoordinates(
+                                        it?.coordinates?.latitude ?: 0.0,
+                                        it?.coordinates?.longitude ?: 0.0
+                                    ),
+                                    photos = it?.photos ?: emptyList<String>()
+                                )
+                            )
+                        }
+                        businesses.postValue(businessList)
+                    }
+                },
+                {
+                    // TODO: 12/12/20
+                    Log.e("error", it.message.toString())
+                }
+            )
     }
 }

@@ -10,7 +10,7 @@ query SearchQuery(
         radius: $radius,
         latitude: $latitude,
         longitude: $longitude,
-        limit: 20,
+        limit: $offset,
         offset: $offset
     ) {
         total

@@ -10,15 +10,13 @@ import javax.inject.Singleton
 class YelpApolloService @Inject constructor(
     private val yelpApolloClient: YelpApolloClient
 ) {
-    private val apolloClient = yelpApolloClient.apolloClient
-
     fun search(
         radius: Double,
         latitude: Double,
         longitude: Double,
         offset: Int,
         queryTerm: String
-    ): ApolloQueryCall<SearchQuery.Data>? {
+    ): ApolloQueryCall<SearchQuery.Data> {
 
         val yelpSearch = SearchQuery(
             radius,
@@ -27,11 +25,12 @@ class YelpApolloService @Inject constructor(
             offset,
             queryTerm
         )
-        return apolloClient.query(yelpSearch)
+
+        return yelpApolloClient.apolloClient.query(yelpSearch)
     }
 
     fun businessDetails(businessId: String): ApolloQueryCall<BusinessDetailsQuery.Data>? {
         val businessQuery = BusinessDetailsQuery(businessId)
-        return apolloClient.query(businessQuery)
+        return yelpApolloClient.apolloClient.query(businessQuery)
     }
 }

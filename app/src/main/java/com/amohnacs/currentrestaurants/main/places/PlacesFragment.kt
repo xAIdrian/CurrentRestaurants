@@ -1,15 +1,14 @@
 package com.amohnacs.currentrestaurants.main.places
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.amohnacs.currentrestaurants.CurrentApp
-import com.amohnacs.currentrestaurants.R
 import com.amohnacs.currentrestaurants.common.ViewModelFactory
 import com.amohnacs.currentrestaurants.databinding.FragmentPlacesBinding
 import com.amohnacs.currentrestaurants.main.MainActivity
@@ -59,5 +58,8 @@ class PlacesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, factory).get(PlacesViewModel::class.java)
         viewModel.getBurritoPlaces()
+        viewModel.businesses.observe(viewLifecycleOwner, Observer {
+            Log.e("Tester", it.size.toString())
+        })
     }
 }
