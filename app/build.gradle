@@ -1,7 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-android-extensions")
+    id("kotlin-kapt")
+    id("com.apollographql.apollo").version("2.4.6")
+}
 
 android {
     compileSdkVersion 30
@@ -43,19 +46,32 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation "com.google.dagger:dagger:$rootProject.dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$rootProject.dagger_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutine_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidx_lifecycle"
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.androidx_navigation"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.androidx_navigation"
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.androidXLifecycle"
+    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.androidXNavigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.androidXNavigation"
+    implementation "com.android.support:cardview-v7:$rootProject.cardViewVersion"
 
     implementation "com.google.android.gms:play-services-location:$rootProject.gmsVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroid"
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJava"
     implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$rootProject.rxAdapter"
+
+    implementation "com.apollographql.apollo:apollo-runtime:$rootProject.apolloGraphQL"
+    implementation "com.apollographql.apollo:apollo-rx2-support:$rootProject.apolloGraphQL"
+
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.loggingVersion"
+
+}
+
+apollo {
+    generateKotlinModels.set(true)
 }

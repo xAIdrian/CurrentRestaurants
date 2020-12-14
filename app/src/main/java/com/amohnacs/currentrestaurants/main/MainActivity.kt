@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var mainComponent: MainComponent
 
-//    val viewModel: MainViewModel by viewModels(factory)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initDaggerGraph()

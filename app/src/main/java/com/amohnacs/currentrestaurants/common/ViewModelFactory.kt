@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class ViewModelFactory<T> @Inject constructor(
     private val viewModelProvider: Provider<T>
-) : ViewModelProvider.Factory {
+) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = viewModelProvider.get() as T
 }

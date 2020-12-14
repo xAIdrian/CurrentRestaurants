@@ -17,7 +17,7 @@ class LocationManager @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    private var lastFetchedLocation: Location? = null
+    var lastFetchedLocation: Location? = null
 
     private fun isLocationEnabled(): Boolean = ActivityCompat.checkSelfPermission(
         context,
@@ -26,7 +26,9 @@ class LocationManager @Inject constructor(
 
     /**
      * We are checking for location availability and then launching our own asynchronous operation
-     * to get the actual location once we are sure we have permissions
+     * to get the actual location once we are sure we have permissions.
+     * The caller of this method then has the option to get a fresh location or use the location
+     * we are holding a reference to throughout the applicaiton
      */
     @SuppressLint("MissingPermission")
     fun getUsersLastLocation(getFreshLocation: Boolean = false): Single<Location> {

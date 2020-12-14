@@ -1,0 +1,35 @@
+query SearchQuery(
+    $radius: Float!,
+    $latitude: Float!,
+    $longitude: Float!,
+    $offset:Int!,
+    $term:String!
+) {
+    search(
+        term: $term,
+        radius: $radius,
+        latitude: $latitude,
+        longitude: $longitude,
+        limit: $offset,
+        offset: $offset
+    ) {
+        total
+        business {
+            id
+            name
+            rating
+            photos
+            price
+            coordinates {
+                latitude
+                longitude
+            }
+            categories {
+                title
+            }
+            location {
+                formatted_address
+            }
+        }
+    }
+}
