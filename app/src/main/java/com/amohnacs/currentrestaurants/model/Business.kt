@@ -9,7 +9,8 @@ data class Business(
     val location: YelpLocation? = null,
     val coordinates: YelpCoordinates,
     val photos: List<String?>,
-    val price: String
+    val price: String,
+    val category: YelpCategory
 )
 
 data class YelpLocation(
@@ -19,4 +20,8 @@ data class YelpLocation(
 data class YelpCoordinates(
     val latitude: Double,
     val longitude: Double
+)
+
+data class YelpCategory(
+    val title: String
 )

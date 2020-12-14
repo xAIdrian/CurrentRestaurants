@@ -24,6 +24,12 @@ query SearchQuery(
                 latitude
                 longitude
             }
+            categories {
+                title
+            }
+            location {
+                formatted_address
+            }
         }
     }
 }

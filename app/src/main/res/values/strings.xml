@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CurrentRestaurants</string>
     <string name="error_permission">You do not have permission to access location</string>
+    <string name="formatted_price">%1$s - %2$s</string>
 </resources>

@@ -13,6 +13,9 @@ query BusinessDetailsQuery($businessID: String!){
             latitude
             longitude
         }
+        categories {
+            title
+        }
         photos
     }
 }

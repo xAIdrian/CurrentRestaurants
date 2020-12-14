@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.amohnacs.currentrestaurants.R
 import com.amohnacs.currentrestaurants.common.LocationManager
 import com.amohnacs.currentrestaurants.domain.YelpRepository
 import com.amohnacs.currentrestaurants.main.MainViewModel
 import com.amohnacs.currentrestaurants.model.Business
+import com.amohnacs.currentrestaurants.model.YelpCategory
 import com.amohnacs.currentrestaurants.model.YelpCoordinates
+import com.amohnacs.currentrestaurants.model.YelpLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -20,6 +23,7 @@ class PlacesViewModel @Inject constructor(
 ) : ViewModel() {
 
     val businesses = MutableLiveData<List<Business>>()
+    val navigateEvent = MutableLiveData<Int>()
 
     @SuppressLint("CheckResult")
     fun getBurritoPlaces() {
@@ -30,7 +34,7 @@ class PlacesViewModel @Inject constructor(
                     it.longitude
                 )
             }.doOnError{
-                // TODO: 12/14/20  
+                // TODO: 12/14/20
                 Log.e("error", it.message.toString())
             }
             .subscribeOn(Schedulers.io())
@@ -53,7 +57,11 @@ class PlacesViewModel @Inject constructor(
                                         it?.coordinates?.latitude ?: 0.0,
                                         it?.coordinates?.longitude ?: 0.0
                                     ),
-                                    photos = it?.photos ?: emptyList<String>()
+                                    photos = it?.photos ?: emptyList<String>(),
+                                    category = YelpCategory(
+                                        it?.categories?.get(0)?.title ?: "No Category"
+                                    ),
+                                    location = YelpLocation(it?.location?.formatted_address.toString())
                                 )
                             )
                         }
@@ -65,5 +73,10 @@ class PlacesViewModel @Inject constructor(
                     Log.e("error", it.message.toString())
                 }
             )
+    }
+
+    fun businessSelected(clickedBusiness: Business) {
+        mainViewModel.selectedBusinessId = clickedBusiness.id
+        navigateEvent.value = R.id.mapsFragment
     }
 }
