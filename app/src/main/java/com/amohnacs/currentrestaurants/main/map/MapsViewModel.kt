@@ -19,6 +19,7 @@ class MapsViewModel @Inject constructor(
 ): ViewModel() {
 
     val business = MutableLiveData<Business>()
+    val errorEvent = MutableLiveData<String>()
 
     @SuppressLint("CheckResult")
     fun getBusinessDetails() {
@@ -30,7 +31,7 @@ class MapsViewModel @Inject constructor(
                 .subscribe(
                     { response ->
                         if (response.hasErrors()) {
-                            // TODO: 12/14/20
+                            errorEvent.value = "response has errors"
                         } else {
                             val businessResponse = response.data?.business
                             business.value = Business(
@@ -53,10 +54,10 @@ class MapsViewModel @Inject constructor(
                         }
                     },
                     {
-                        // TODO: 12/14/20
+                        errorEvent.value = it.message
                     })
         } else {
-            // TODO: 12/14/20
+            errorEvent.value = "business ID is missing for some reason...go back!"
         }
     }
 }

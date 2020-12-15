@@ -21,6 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class MapsFragment : Fragment() {
@@ -75,6 +76,9 @@ class MapsFragment : Fragment() {
         viewModel.business.observe(viewLifecycleOwner, Observer {
             setBottomSheet(it)
             addMarkerToMap(it)
+        })
+        viewModel.errorEvent.observe(viewLifecycleOwner, Observer {
+            binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_LONG).show() }
         })
     }
 

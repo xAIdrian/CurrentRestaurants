@@ -1,7 +1,7 @@
 package com.amohnacs.currentrestaurants.main.places
 
 import android.annotation.SuppressLint
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.amohnacs.currentrestaurants.R
@@ -23,7 +23,9 @@ class PlacesViewModel @Inject constructor(
 ) : ViewModel() {
 
     val businesses = MutableLiveData<List<Business>>()
-    val navigateEvent = MutableLiveData<Int>()
+    val navigateEvent = MutableLiveData<@androidx.annotation.NavigationRes Int>()
+    val errorEvent = MutableLiveData<String>()
+    val emptyEvent = MutableLiveData<String>()
 
     @SuppressLint("CheckResult")
     fun getBurritoPlaces() {
@@ -34,43 +36,45 @@ class PlacesViewModel @Inject constructor(
                     it.longitude
                 )
             }.doOnError{
-                // TODO: 12/14/20
-                Log.e("error", it.message.toString())
+                errorEvent.value = it.message
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { response ->
                     if (response.hasErrors()) {
-                        // TODO: 12/12/20
-                        Log.e("error", "response has errors")
+                        errorEvent.value = "response has errors"
                     } else {
-                        val businessList = ArrayList<Business>()
-                        response.data?.search?.business?.forEach {
-                            businessList.add(
-                                Business(
-                                    id = it?.id ?: "",
-                                    name = it?.name ?: "",
-                                    price = it?.price ?: "",
-                                    rating = it?.rating ?: 0.0,
-                                    coordinates = YelpCoordinates(
-                                        it?.coordinates?.latitude ?: 0.0,
-                                        it?.coordinates?.longitude ?: 0.0
-                                    ),
-                                    photos = it?.photos ?: emptyList<String>(),
-                                    category = YelpCategory(
-                                        it?.categories?.get(0)?.title ?: "No Category"
-                                    ),
-                                    location = YelpLocation(it?.location?.formatted_address.toString())
+                        val businessesResponse = response.data?.search?.business
+                        if (businessesResponse?.isNotEmpty() == true) {
+                            val businessList = ArrayList<Business>()
+                            businessesResponse.forEach {
+                                businessList.add(
+                                    Business(
+                                        id = it?.id ?: "",
+                                        name = it?.name ?: "",
+                                        price = it?.price ?: "",
+                                        rating = it?.rating ?: 0.0,
+                                        coordinates = YelpCoordinates(
+                                            it?.coordinates?.latitude ?: 0.0,
+                                            it?.coordinates?.longitude ?: 0.0
+                                        ),
+                                        photos = it?.photos ?: emptyList<String>(),
+                                        category = YelpCategory(
+                                            it?.categories?.get(0)?.title ?: "No Category"
+                                        ),
+                                        location = YelpLocation(it?.location?.formatted_address.toString())
+                                    )
                                 )
-                            )
+                            }
+                            businesses.postValue(businessList)
+                        } else {
+                            emptyEvent.value = "No businesses found"
                         }
-                        businesses.postValue(businessList)
                     }
                 },
                 {
-                    // TODO: 12/12/20
-                    Log.e("error", it.message.toString())
+                    errorEvent.value = it.message
                 }
             )
     }

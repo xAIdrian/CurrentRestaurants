@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.amohnacs.currentrestaurants.common.ViewModelFactory
 import com.amohnacs.currentrestaurants.databinding.FragmentPlacesBinding
 import com.amohnacs.currentrestaurants.main.MainActivity
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class PlacesFragment : Fragment() {
@@ -49,6 +50,12 @@ class PlacesFragment : Fragment() {
         })
         viewModel.navigateEvent.observe(viewLifecycleOwner, Observer {
             findNavController().navigate(it)
+        })
+        viewModel.errorEvent.observe(viewLifecycleOwner, Observer {
+            binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_LONG).show() }
+        })
+        viewModel.emptyEvent.observe(viewLifecycleOwner, Observer {
+            binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_INDEFINITE).show() }
         })
     }
 }
