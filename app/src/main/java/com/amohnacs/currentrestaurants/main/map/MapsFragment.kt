@@ -1,38 +1,42 @@
 package com.amohnacs.currentrestaurants.main.map
 
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.amohnacs.currentrestaurants.R
-import com.amohnacs.currentrestaurants.main.MainViewModel
-
+import com.amohnacs.currentrestaurants.common.ViewModelFactory
+import com.amohnacs.currentrestaurants.databinding.FragmentMapsBinding
+import com.amohnacs.currentrestaurants.main.MainActivity
+import com.amohnacs.currentrestaurants.model.Business
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import javax.inject.Inject
 
 class MapsFragment : Fragment() {
 
-    private val mainViewModel: MainViewModel by activityViewModels()
+    @Inject
+    lateinit var factory: ViewModelFactory<MapsViewModel>
+    private lateinit var viewModel: MapsViewModel
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    private var binding: FragmentMapsBinding? = null
+    private var mapFragment: SupportMapFragment? = null
+
+    private var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        (activity as MainActivity).mainComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -40,12 +44,66 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        binding = FragmentMapsBinding.inflate(inflater)
+        binding?.bottomSheetLayout?.bottomSheet?.let {
+            bottomSheetBehavior = BottomSheetBehavior.from(it)
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                /**
+                 * Callback for handling the [OnBackPressedDispatcher.onBackPressed] event.
+                 */
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.action_mapsFragment_to_placesFragment)
+                }
+            }
+        )
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel = ViewModelProvider(this, factory).get(MapsViewModel::class.java)
+        viewModel.getBusinessDetails()
+        viewModel.business.observe(viewLifecycleOwner, Observer {
+            setBottomSheet(it)
+            addMarkerToMap(it)
+        })
+    }
+
+    private fun setBottomSheet(dialogBusiness: Business?) {
+        val bottomSheet = binding?.bottomSheetLayout
+        bottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheet?.name?.text = dialogBusiness?.name
+        bottomSheet?.address?.text = dialogBusiness?.location?.address
+        bottomSheet?.phone?.text = dialogBusiness?.displayPhone
+        bottomSheet?.category?.text = activity?.getString(
+            R.string.formatted_price,
+            dialogBusiness?.price,
+            dialogBusiness?.category?.title
+        )
+    }
+
+    private fun addMarkerToMap(business: Business?) {
+        val businessLatLng = LatLng(
+            business?.coordinates?.latitude ?: 0.0,
+            business?.coordinates?.longitude ?: 0.0
+        )
+        mapFragment?.getMapAsync {
+            it.addMarker(
+                MarkerOptions()
+                    .position(businessLatLng)
+                    .title(business?.name ?: "")
+            )
+            it.moveCamera(CameraUpdateFactory.newLatLng(businessLatLng))
+            it.animateCamera(CameraUpdateFactory.zoomTo(15.0f))
+        }
     }
 }

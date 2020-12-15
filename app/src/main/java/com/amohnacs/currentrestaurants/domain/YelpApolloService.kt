@@ -16,21 +16,17 @@ class YelpApolloService @Inject constructor(
         longitude: Double,
         offset: Int,
         queryTerm: String
-    ): ApolloQueryCall<SearchQuery.Data> {
-
-        val yelpSearch = SearchQuery(
-            radius,
-            latitude,
-            longitude,
-            offset,
-            queryTerm
+    ): ApolloQueryCall<SearchQuery.Data> =
+        yelpApolloClient.apolloClient.query(
+            SearchQuery(
+                radius,
+                latitude,
+                longitude,
+                offset,
+                queryTerm
+            )
         )
 
-        return yelpApolloClient.apolloClient.query(yelpSearch)
-    }
-
-    fun businessDetails(businessId: String): ApolloQueryCall<BusinessDetailsQuery.Data>? {
-        val businessQuery = BusinessDetailsQuery(businessId)
-        return yelpApolloClient.apolloClient.query(businessQuery)
-    }
+    fun businessDetails(businessId: String): ApolloQueryCall<BusinessDetailsQuery.Data> =
+        yelpApolloClient.apolloClient.query(BusinessDetailsQuery(businessId))
 }

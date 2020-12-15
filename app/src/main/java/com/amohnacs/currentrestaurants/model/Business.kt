@@ -1,5 +1,7 @@
 package com.amohnacs.currentrestaurants.model
 
+import java.io.Serializable
+
 data class Business(
     val id: String,
     val name: String,
@@ -11,17 +13,17 @@ data class Business(
     val photos: List<String?>,
     val price: String,
     val category: YelpCategory
-)
+): Serializable
 
 data class YelpLocation(
     val address: String
-)
+): Serializable
 
 data class YelpCoordinates(
     val latitude: Double,
     val longitude: Double
-)
+): Serializable
 
 data class YelpCategory(
     val title: String
-)
+): Serializable
