@@ -1,4 +1,4 @@
-package com.amohnacs.currentrestaurants.domain
+package com.amohnacs.currentrestaurants.domain.yelpQL
 
 import com.apollographql.apollo.ApolloQueryCall
 import yelpQL.BusinessDetailsQuery

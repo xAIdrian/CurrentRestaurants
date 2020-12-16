@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/placesFragment"
         android:name="com.amohnacs.currentrestaurants.main.places.PlacesFragment"
-        android:label="Blank"
+        android:label="Current Burritos"
         tools:layout="@layout/fragment_places" >
         <action
             android:id="@+id/action_placesFragment_to_mapsFragment"
@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/mapsFragment"
         android:name="com.amohnacs.currentrestaurants.main.map.MapsFragment"
-        android:label="Blank"
+        android:label=""
         tools:layout="@layout/fragment_maps" >
         <action
             android:id="@+id/action_mapsFragment_to_placesFragment"

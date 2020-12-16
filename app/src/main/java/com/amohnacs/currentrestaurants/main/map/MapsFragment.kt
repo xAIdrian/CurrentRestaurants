@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,13 +17,13 @@ import com.amohnacs.currentrestaurants.databinding.FragmentMapsBinding
 import com.amohnacs.currentrestaurants.main.MainActivity
 import com.amohnacs.currentrestaurants.model.Business
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
+
 
 class MapsFragment : Fragment() {
 
@@ -74,6 +75,7 @@ class MapsFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory).get(MapsViewModel::class.java)
         viewModel.getBusinessDetails()
         viewModel.business.observe(viewLifecycleOwner, Observer {
+            (requireActivity() as AppCompatActivity?)?.supportActionBar?.title = it.name
             setBottomSheet(it)
             addMarkerToMap(it)
         })
@@ -81,6 +83,8 @@ class MapsFragment : Fragment() {
             binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_LONG).show() }
         })
     }
+
+
 
     private fun setBottomSheet(dialogBusiness: Business?) {
         val bottomSheet = binding?.bottomSheetLayout
