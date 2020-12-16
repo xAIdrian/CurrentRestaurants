@@ -40,4 +40,6 @@ ext {
     apolloGraphQL = '2.4.6'
     retrofitVersion = '2.9.0'
     loggingVersion = '4.9.0'
+
+    pagingVersion = '3.0.0-alpha05'
 }

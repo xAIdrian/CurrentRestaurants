@@ -1,4 +1,4 @@
-package com.amohnacs.currentrestaurants.domain
+package com.amohnacs.currentrestaurants.domain.yelpQL
 
 import com.amohnacs.currentrestaurants.R
 import com.amohnacs.currentrestaurants.common.ResourceProvider
@@ -30,7 +30,11 @@ class YelpApolloClient @Inject constructor(
         builder.writeTimeout(TIME_OUT.toLong(), TimeUnit.MILLISECONDS)
 
         addLoggingInterceptor(builder)
-        builder.addInterceptor(AuthorizationInterceptor(authToken))
+        builder.addInterceptor(
+            AuthorizationInterceptor(
+                authToken
+            )
+        )
 
         return builder.build()
     }
