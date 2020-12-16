@@ -18,8 +18,11 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+    <string name="google_api_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyDi3yGdTJ4sES9DJ24AsGgdXN2K9EbGs7M
+    </string>
+    <string name="places_api_key">
+        AIzaSyCkKW31avBDnbQV9MowJoV7dd861HtMns4
     </string>
     <string name="yelp_client_id">
         Yt6qdXWvJq6aGZUyOLh0Yg

@@ -1,6 +1,8 @@
 package com.amohnacs.currentrestaurants.main.places
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +42,7 @@ class PlacesFragment : Fragment() {
         return binding?.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, factory).get(PlacesViewModel::class.java)
@@ -47,6 +50,7 @@ class PlacesFragment : Fragment() {
         placesAdapter = PlacesAdapter(viewModel)
         binding?.list?.adapter = placesAdapter
 
+        viewModel.getBurritoPlacesFromGoogle()
         viewModel.getBurritoPlaces()
             .subscribe(
                 { pagingData ->
@@ -66,6 +70,9 @@ class PlacesFragment : Fragment() {
         })
         viewModel.emptyEvent.observe(viewLifecycleOwner, Observer {
             binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_INDEFINITE).show() }
+        })
+        viewModel.placesBurritoLiveData.observe(viewLifecycleOwner, Observer {
+            Log.e("tagger", "lives")
         })
     }
 }
