@@ -60,6 +60,15 @@ class PlacesFragment : Fragment() {
         viewModel.emptyEvent.observe(viewLifecycleOwner, Observer {
             binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_INDEFINITE).show() }
         })
+        viewModel.loadingEvent.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                binding?.list?.visibility = View.GONE
+                binding?.indeterminateBar?.visibility = View.VISIBLE
+            } else {
+                binding?.list?.visibility = View.VISIBLE
+                binding?.indeterminateBar?.visibility = View.GONE
+            }
+        })
         viewModel.placesBurritoLiveData.observe(viewLifecycleOwner, Observer {
             placesAdapter?.updateBusinesses(it)
         })

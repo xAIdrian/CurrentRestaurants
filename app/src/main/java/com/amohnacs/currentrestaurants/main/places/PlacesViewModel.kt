@@ -24,6 +24,7 @@ class PlacesViewModel @Inject constructor(
     val navigateEvent = MutableLiveData<@androidx.annotation.NavigationRes Int>()
     val errorEvent = MutableLiveData<String>()
     val emptyEvent = MutableLiveData<String>()
+    val loadingEvent = MutableLiveData<Boolean>(false)
 
     val placesBurritoLiveData = MutableLiveData<List<Business>>()
     val isShowingYelpQlLiveDataSource = MutableLiveData<Boolean>(true)
@@ -31,18 +32,19 @@ class PlacesViewModel @Inject constructor(
 
     @SuppressLint("CheckResult") //for lint error of not using result of doOnError this is delegated
     fun getBurritoPlacesFromYelp() {
+        loadingEvent.value = true
         locationManager.getUsersLastLocation()
             .flatMapObservable {
                 businessSearchRepository.getBurritoSearch(
                     it.latitude,
                     it.longitude
                 )
-            }.doOnError {
-                errorEvent.value = it.message
             }.subscribe(
                 { pagingData ->
+                    loadingEvent.value = false
                     updatePagingDataLiveData.value = pagingData
                 }, {
+                    loadingEvent.value = false
                     errorEvent.value = it.message
                 })
     }
@@ -54,6 +56,7 @@ class PlacesViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun getBurritoPlacesFromGoogle() {
+        loadingEvent.value = true
         locationManager.getUsersLastLocation()
             .flatMapObservable {
                 businessSearchRepository.getBurritoSearchPlaces(
@@ -72,8 +75,10 @@ class PlacesViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                loadingEvent.value = false
                 placesBurritoLiveData.value = it
             }, {
+                loadingEvent.value = false
                 errorEvent.value = it.message
             })
     }

@@ -9,15 +9,14 @@ import com.amohnacs.currentrestaurants.common.ResourceProvider
 import com.amohnacs.currentrestaurants.domain.googleplaces.GooglePlacesService
 import com.amohnacs.currentrestaurants.domain.yelpQL.SearchPagingSource
 import com.amohnacs.currentrestaurants.domain.yelpQL.YelpApolloService
-import com.amohnacs.currentrestaurants.model.*
+import com.amohnacs.currentrestaurants.model.Business
+import com.amohnacs.currentrestaurants.model.PlacesSearchResponse
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.rx2.Rx2Apollo
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import yelpQL.BusinessDetailsQuery
 import javax.inject.Inject
-
 
 class BusinessSearchRepository @Inject constructor(
     private val yelpService: YelpApolloService,
