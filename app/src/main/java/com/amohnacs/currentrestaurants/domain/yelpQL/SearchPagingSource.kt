@@ -15,7 +15,9 @@ import yelpQL.SearchQuery
 class SearchPagingSource(
     private val yelpService: YelpApolloService,
     private val searchLatitude: Double,
-    private val searchLongitude: Double
+    private val searchLongitude: Double,
+    private val radius: Double,
+    private val term: String
 ) : RxPagingSource<Int, Business>() {
     /**
      * Loading API for [PagingSource].
@@ -25,7 +27,7 @@ class SearchPagingSource(
     @SuppressLint("CheckResult")
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, Business>> {
         val pagingOffsetKey = params.key ?: STARTING_OFFSET_VALUE
-        return getBurritoSearchResults(searchLatitude, searchLongitude)
+        return getBurritoSearchResults(searchLatitude, searchLongitude, radius, term)
             .subscribeOn(Schedulers.io())
             .map { response ->
                 val businessesResponse = response.data?.search?.business
@@ -57,15 +59,17 @@ class SearchPagingSource(
 
     private fun getBurritoSearchResults(
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        radius: Double,
+        term: String
     ): Single<Response<SearchQuery.Data>> =
         Rx2Apollo.from(
             yelpService.search(
-                TWELVE_MILE_BURRITO_RADIUS,
+                radius,
                 latitude,
                 longitude,
                 0,
-                BURRITO_QUERY_TERM
+                term
             )
         ).firstOrError()
 
@@ -80,8 +84,5 @@ class SearchPagingSource(
     companion object {
         private const val STARTING_OFFSET_VALUE = 0
         internal const val PAGE_SIZE_OFFSET_VALUE = 20
-
-        const val TWELVE_MILE_BURRITO_RADIUS = 19200.0
-        const val BURRITO_QUERY_TERM = "burrito"
     }
 }

@@ -7,12 +7,12 @@ data class Business(
     val name: String,
     val displayPhone: String? = null,
     val reviewCount: Int? = null,
-    val rating: Double,
+    val rating: Double? = null,
     val location: YelpLocation? = null,
     val coordinates: YelpCoordinates,
-    val photos: List<String?>,
-    val price: String,
-    val category: YelpCategory
+    val photos: List<String?>? = null,
+    val price: String? = null,
+    val category: YelpCategory? = null
 ): Serializable
 
 data class YelpLocation(

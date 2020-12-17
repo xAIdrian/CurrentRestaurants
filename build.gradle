@@ -42,4 +42,5 @@ ext {
     loggingVersion = '4.9.0'
 
     pagingVersion = '3.0.0-alpha05'
+    materialComponentVersion = '1.2.1'
 }
