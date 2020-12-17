@@ -2,7 +2,6 @@ package com.amohnacs.currentrestaurants.main.places
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.amohnacs.currentrestaurants.common.ViewModelFactory
 import com.amohnacs.currentrestaurants.databinding.FragmentPlacesBinding
 import com.amohnacs.currentrestaurants.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class PlacesFragment : Fragment() {
@@ -26,6 +24,7 @@ class PlacesFragment : Fragment() {
     private lateinit var viewModel: PlacesViewModel
 
     private var binding: FragmentPlacesBinding? = null
+    private var yelpPagingAdapter: YelpPagingAdapter? = null
     private var placesAdapter: PlacesAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +38,9 @@ class PlacesFragment : Fragment() {
     ): View? {
         binding = FragmentPlacesBinding.inflate(inflater)
         binding?.list?.layoutManager = LinearLayoutManager(context)
+        binding?.fab?.setOnClickListener { view ->
+            viewModel.loadNewDataSource()
+        }
         return binding?.root
     }
 
@@ -47,14 +49,14 @@ class PlacesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, factory).get(PlacesViewModel::class.java)
 
+        yelpPagingAdapter = YelpPagingAdapter(viewModel)
         placesAdapter = PlacesAdapter(viewModel)
-        binding?.list?.adapter = placesAdapter
 
         viewModel.getBurritoPlacesFromGoogle()
-        viewModel.getBurritoPlaces()
+        viewModel.getBurritoPlacesFromYelp()
             .subscribe(
                 { pagingData ->
-                placesAdapter!!.submitData(lifecycle, pagingData)
+                yelpPagingAdapter!!.submitData(lifecycle, pagingData)
                 }, {
                 Toast.makeText(
                     requireContext(),
@@ -72,7 +74,16 @@ class PlacesFragment : Fragment() {
             binding?.root?.let { it1 -> Snackbar.make(it1, it, Snackbar.LENGTH_INDEFINITE).show() }
         })
         viewModel.placesBurritoLiveData.observe(viewLifecycleOwner, Observer {
-            Log.e("tagger", "lives")
+            placesAdapter?.updateBusinesses(it)
+        })
+        viewModel.isShowingYelpQlDataSource.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                binding?.list?.adapter = yelpPagingAdapter
+                binding?.fab?.text = requireActivity().getString(R.string.load_places_api)
+            } else {
+                binding?.list?.adapter = placesAdapter
+                binding?.fab?.text = requireActivity().getString(R.string.load_yelp_api)
+            }
         })
     }
 }

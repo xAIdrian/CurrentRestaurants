@@ -74,6 +74,7 @@ dependencies {
 
     implementation "androidx.paging:paging-runtime:$rootProject.pagingVersion"
     implementation "androidx.paging:paging-rxjava2:$rootProject.pagingVersion"
+    implementation "com.google.android.material:material:$rootProject.materialComponentVersion"
 }
 
 apollo {

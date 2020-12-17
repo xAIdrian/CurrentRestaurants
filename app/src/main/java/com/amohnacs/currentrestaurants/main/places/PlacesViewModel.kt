@@ -26,9 +26,10 @@ class PlacesViewModel @Inject constructor(
     val emptyEvent = MutableLiveData<String>()
 
     val placesBurritoLiveData = MutableLiveData<List<BusinessResult>>()
+    var isShowingYelpQlDataSource = MutableLiveData<Boolean>(true)
 
     @SuppressLint("CheckResult") //for lint error of not using result of doOnError this is delegated
-    fun getBurritoPlaces(): Observable<PagingData<Business>> =
+    fun getBurritoPlacesFromYelp(): Observable<PagingData<Business>> =
         locationManager.getUsersLastLocation()
             .flatMapObservable {
                 yelpRepository.getBurritoSearch(
@@ -40,6 +41,12 @@ class PlacesViewModel @Inject constructor(
             }
 
     fun businessSelected(clickedBusiness: Business) {
+        mainViewModel.selectedBusinessId = clickedBusiness.id
+        navigateEvent.value = R.id.mapsFragment
+    }
+
+    // TODO: 12/16/20
+    fun businessSelected(clickedBusiness: BusinessResult) {
         mainViewModel.selectedBusinessId = clickedBusiness.id
         navigateEvent.value = R.id.mapsFragment
     }
@@ -60,5 +67,14 @@ class PlacesViewModel @Inject constructor(
             }, {
                 errorEvent.value = it.message
             })
+    }
+
+    fun loadNewDataSource() {
+        isShowingYelpQlDataSource.value = !isShowingYelpQlDataSource.value!!
+        if (isShowingYelpQlDataSource.value == true) {
+            getBurritoPlacesFromYelp()
+        } else {
+            getBurritoPlacesFromGoogle()
+        }
     }
 }

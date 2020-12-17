@@ -10,6 +10,7 @@ import com.amohnacs.currentrestaurants.domain.googleplaces.GooglePlacesService
 import com.amohnacs.currentrestaurants.domain.yelpQL.SearchPagingSource
 import com.amohnacs.currentrestaurants.domain.yelpQL.YelpApolloService
 import com.amohnacs.currentrestaurants.model.Business
+import com.amohnacs.currentrestaurants.model.PlacesSearchResponse
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.rx2.Rx2Apollo
 import io.reactivex.Observable
@@ -50,7 +51,7 @@ class YelpRepository @Inject constructor(
     fun findUserPlace(
         latitude: Double,
         longitude: Double
-    ) = placesClient.getPlacesSearchResults(
+    ): Observable<PlacesSearchResponse> = placesClient.getPlacesSearchResults(
             BURRITO_QUERY_TERM,
             "$latitude, $longitude",
             BURRITO_QUERY_TERM,
