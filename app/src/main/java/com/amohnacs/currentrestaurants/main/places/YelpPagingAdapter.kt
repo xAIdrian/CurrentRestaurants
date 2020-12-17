@@ -29,7 +29,7 @@ class YelpPagingAdapter(
             binding.category.text = binding.root.context.getString(
                 R.string.formatted_price,
                 business.price,
-                business.category.title
+                business.category?.title ?: "No Category"
             )
             binding.cardView.setOnClickListener {
                 viewModel.businessSelected(business)

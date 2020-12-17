@@ -9,11 +9,11 @@ import com.amohnacs.currentrestaurants.common.ResourceProvider
 import com.amohnacs.currentrestaurants.domain.googleplaces.GooglePlacesService
 import com.amohnacs.currentrestaurants.domain.yelpQL.SearchPagingSource
 import com.amohnacs.currentrestaurants.domain.yelpQL.YelpApolloService
-import com.amohnacs.currentrestaurants.model.Business
-import com.amohnacs.currentrestaurants.model.PlacesSearchResponse
+import com.amohnacs.currentrestaurants.model.*
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.rx2.Rx2Apollo
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import yelpQL.BusinessDetailsQuery
 import javax.inject.Inject
@@ -51,12 +51,49 @@ class YelpRepository @Inject constructor(
     fun findUserPlace(
         latitude: Double,
         longitude: Double
-    ): Observable<PlacesSearchResponse> = placesClient.getPlacesSearchResults(
+    ): Single<ArrayList<Business>> = placesClient.getPlacesSearchResults(
             BURRITO_QUERY_TERM,
             "$latitude, $longitude",
             BURRITO_QUERY_TERM,
             resourceProvider.getString(R.string.places_api_key)
-        ).subscribeOn(Schedulers.io())
+        )
+        .flatMap {
+            Observable.fromIterable(it.results)
+                .flatMap {
+                    it.placeId?.let { placesId ->
+                        placesClient.getPlacesBusinessDetails(
+                            placesId,
+                            resourceProvider.getString(R.string.places_api_key)
+                        )
+                    }
+                }
+        }.toList()
+        .map { businessResultsResponse ->
+            val businessList = ArrayList<Business>()
+            businessResultsResponse.forEach {
+                val businessResult = it.result
+                businessList.add(
+                    Business(
+                        id = businessResult?.id ?: "",
+                        name = businessResult?.name ?: "",
+                        coordinates = YelpCoordinates(
+                            businessResult?.geometry?.location?.lat ?: 0.0,
+                            businessResult?.geometry?.location?.lng ?: 0.0
+                        ),
+                        category = YelpCategory(
+                            businessResult?.types?.get(0) ?: "No Category"
+                        ),
+                        displayPhone = businessResult?.phoneNumber,
+                        location = YelpLocation(
+                            businessResult?.address ?: ""
+                        ),
+                        rating = businessResult?.rating
+                    )
+                )
+            }
+            businessList
+        }.subscribeOn(Schedulers.io())
+
 
     companion object {
         const val TWELVE_MILE_BURRITO_RADIUS = 19200.0

@@ -14,4 +14,10 @@ interface GooglePlacesService {
         @Query("radius") inputType: String,
         @Query("key") apiKey: String
     ): Observable<PlacesSearchResponse>
+
+    @GET("maps/api/place/details/json")
+    fun getPlacesBusinessDetails(
+        @Query("place_id") placeId: String,
+        @Query("key") apiKey: String
+    ): Observable<PlacesSearchResponse>
 }

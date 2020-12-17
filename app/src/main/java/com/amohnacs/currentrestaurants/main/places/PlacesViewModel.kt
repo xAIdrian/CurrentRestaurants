@@ -25,8 +25,8 @@ class PlacesViewModel @Inject constructor(
     val errorEvent = MutableLiveData<String>()
     val emptyEvent = MutableLiveData<String>()
 
-    val placesBurritoLiveData = MutableLiveData<List<BusinessResult>>()
-    var isShowingYelpQlDataSource = MutableLiveData<Boolean>(true)
+    val placesBurritoLiveData = MutableLiveData<List<Business>>()
+    var isShowingYelpQlDataSource = MutableLiveData<Boolean>(mainViewModel.isShowingYelpQlDataSource)
 
     @SuppressLint("CheckResult") //for lint error of not using result of doOnError this is delegated
     fun getBurritoPlacesFromYelp(): Observable<PagingData<Business>> =
@@ -45,16 +45,10 @@ class PlacesViewModel @Inject constructor(
         navigateEvent.value = R.id.mapsFragment
     }
 
-    // TODO: 12/16/20
-    fun businessSelected(clickedBusiness: BusinessResult) {
-        mainViewModel.selectedBusinessId = clickedBusiness.id
-        navigateEvent.value = R.id.mapsFragment
-    }
-
     @SuppressLint("CheckResult")
     fun getBurritoPlacesFromGoogle() {
         locationManager.getUsersLastLocation()
-            .flatMapObservable {
+            .flatMap {
                 yelpRepository.findUserPlace(
                     it.latitude,
                     it.longitude
@@ -63,14 +57,18 @@ class PlacesViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                placesBurritoLiveData.value = it.results
+                placesBurritoLiveData.value = it
             }, {
                 errorEvent.value = it.message
             })
     }
 
     fun loadNewDataSource() {
-        isShowingYelpQlDataSource.value = !isShowingYelpQlDataSource.value!!
+        // update datasource in main for persistence
+        val updatedDataSource = !mainViewModel.isShowingYelpQlDataSource
+        mainViewModel.isShowingYelpQlDataSource = updatedDataSource
+        isShowingYelpQlDataSource.value = updatedDataSource
+
         if (isShowingYelpQlDataSource.value == true) {
             getBurritoPlacesFromYelp()
         } else {
