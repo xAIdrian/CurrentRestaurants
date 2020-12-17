@@ -79,6 +79,6 @@ class PlacesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.initLoadFromDataSource()
+        viewModel.loadFromDataSource(false)
     }
 }

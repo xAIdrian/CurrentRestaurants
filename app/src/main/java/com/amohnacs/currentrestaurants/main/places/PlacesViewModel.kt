@@ -78,17 +78,13 @@ class PlacesViewModel @Inject constructor(
             })
     }
 
-    fun initLoadFromDataSource() {
-        if (mainViewModel.currentDataSource.datasource == YELP_QL) {
-            getBurritoPlacesFromYelp()
-        } else {
-            getBurritoPlacesFromGoogle()
-        }
-    }
-
-    fun loadFromDataSource() {
+    fun loadFromDataSource(needNewCurrentDataSource: Boolean = true) {
         // update datasource in main for persistence
-        val newCurrentDataSource = mainViewModel.currentDataSource.updateToNewCurrentDataSource()
+        val newCurrentDataSource = if (needNewCurrentDataSource) {
+            mainViewModel.currentDataSource.updateToNewCurrentDataSource()
+        } else {
+            mainViewModel.currentDataSource
+        }
         isShowingYelpQlLiveDataSource.value = if (newCurrentDataSource.datasource == YELP_QL) {
             getBurritoPlacesFromYelp()
             true

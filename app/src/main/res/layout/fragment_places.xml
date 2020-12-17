@@ -12,6 +12,8 @@
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/fragment_places"/>
 
+    
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
