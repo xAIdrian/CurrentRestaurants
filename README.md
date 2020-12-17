@@ -7,6 +7,10 @@
 - Paging source
 - Use of FlatMaps, Observables, and translations through Singles
 
+<img width="366" alt="Screen Shot 2020-12-17 at 4 00 23 PM" src="https://user-images.githubusercontent.com/7444521/102543300-160f6a80-4081-11eb-9369-37a99f462d7c.png">
+<img width="362" alt="Screen Shot 2020-12-17 at 4 00 35 PM" src="https://user-images.githubusercontent.com/7444521/102543298-160f6a80-4081-11eb-8146-48225455e4ad.png">
+
+
 ### Clean Android Architecture
 Clean architecture is the separation of concerns.  We want the “inner levels” meaning we start on the inside with the web/domain going through the use cases through the viewmodel to the view (outermost) to have no idea of what is going on in the classes that it calls across circles.
 
