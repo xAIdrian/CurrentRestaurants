@@ -32,7 +32,7 @@ class PlacesAdapter(
             item.category?.title?.capitalize()
         )
         holder.binding.cardView.setOnClickListener {
-            viewModel.businessSelected(item)
+            viewModel.businessSelected(item.id)
         }
     }
 

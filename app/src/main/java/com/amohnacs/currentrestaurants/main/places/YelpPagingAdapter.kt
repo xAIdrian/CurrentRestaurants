@@ -32,7 +32,7 @@ class YelpPagingAdapter(
                 business.category?.title ?: "No Category"
             )
             binding.cardView.setOnClickListener {
-                viewModel.businessSelected(business)
+                viewModel.businessSelected(business.id)
             }
         }
     }

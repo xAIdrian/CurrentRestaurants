@@ -19,7 +19,7 @@ import yelpQL.BusinessDetailsQuery
 import javax.inject.Inject
 
 
-class YelpRepository @Inject constructor(
+class BusinessSearchRepository @Inject constructor(
     private val yelpService: YelpApolloService,
     private val placesClient: GooglePlacesService,
     private val resourceProvider: ResourceProvider
@@ -48,52 +48,31 @@ class YelpRepository @Inject constructor(
     fun getBusinessDetailsWithId(id: String): Observable<Response<BusinessDetailsQuery.Data>> =
         Rx2Apollo.from(yelpService.businessDetails(id))
 
-    fun findUserPlace(
+    fun getBurritoSearchPlaces(
         latitude: Double,
         longitude: Double
-    ): Single<ArrayList<Business>> = placesClient.getPlacesSearchResults(
-            BURRITO_QUERY_TERM,
-            "$latitude, $longitude",
-            BURRITO_QUERY_TERM,
+    ): Observable<PlacesSearchResponse>? = placesClient.getPlacesSearchResults(
+        BURRITO_QUERY_TERM,
+        "$latitude, $longitude",
+        BURRITO_QUERY_TERM,
+        resourceProvider.getString(R.string.places_api_key)
+    ).flatMap { placesSearchResponse ->
+        Observable.fromIterable(placesSearchResponse.results)
+            .flatMap {
+                it.placeId?.let { placesId ->
+                    placesClient.getPlacesBusinessDetails(
+                        placesId,
+                        resourceProvider.getString(R.string.places_api_key)
+                    )
+                }
+            }
+    }.subscribeOn(Schedulers.io())
+
+    fun getBusinessDetailsWithPlaceId(placesId: String) =
+        placesClient.getPlacesBusinessDetails(
+            placesId,
             resourceProvider.getString(R.string.places_api_key)
         )
-        .flatMap {
-            Observable.fromIterable(it.results)
-                .flatMap {
-                    it.placeId?.let { placesId ->
-                        placesClient.getPlacesBusinessDetails(
-                            placesId,
-                            resourceProvider.getString(R.string.places_api_key)
-                        )
-                    }
-                }
-        }.toList()
-        .map { businessResultsResponse ->
-            val businessList = ArrayList<Business>()
-            businessResultsResponse.forEach {
-                val businessResult = it.result
-                businessList.add(
-                    Business(
-                        id = businessResult?.id ?: "",
-                        name = businessResult?.name ?: "",
-                        coordinates = YelpCoordinates(
-                            businessResult?.geometry?.location?.lat ?: 0.0,
-                            businessResult?.geometry?.location?.lng ?: 0.0
-                        ),
-                        category = YelpCategory(
-                            businessResult?.types?.get(0) ?: "No Category"
-                        ),
-                        displayPhone = businessResult?.phoneNumber,
-                        location = YelpLocation(
-                            businessResult?.address ?: ""
-                        ),
-                        rating = businessResult?.rating
-                    )
-                )
-            }
-            businessList
-        }.subscribeOn(Schedulers.io())
-
 
     companion object {
         const val TWELVE_MILE_BURRITO_RADIUS = 19200.0

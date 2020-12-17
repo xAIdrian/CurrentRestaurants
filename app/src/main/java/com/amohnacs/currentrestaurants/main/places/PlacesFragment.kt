@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -39,7 +38,7 @@ class PlacesFragment : Fragment() {
         binding = FragmentPlacesBinding.inflate(inflater)
         binding?.list?.layoutManager = LinearLayoutManager(context)
         binding?.fab?.setOnClickListener { view ->
-            viewModel.loadNewDataSource()
+            viewModel.loadFromDataSource()
         }
         return binding?.root
     }
@@ -52,18 +51,6 @@ class PlacesFragment : Fragment() {
         yelpPagingAdapter = YelpPagingAdapter(viewModel)
         placesAdapter = PlacesAdapter(viewModel)
 
-        viewModel.getBurritoPlacesFromGoogle()
-        viewModel.getBurritoPlacesFromYelp()
-            .subscribe(
-                { pagingData ->
-                yelpPagingAdapter!!.submitData(lifecycle, pagingData)
-                }, {
-                Toast.makeText(
-                    requireContext(),
-                    requireActivity().getString(R.string.error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            })
         viewModel.navigateEvent.observe(viewLifecycleOwner, Observer {
             findNavController().navigate(it)
         })
@@ -76,7 +63,10 @@ class PlacesFragment : Fragment() {
         viewModel.placesBurritoLiveData.observe(viewLifecycleOwner, Observer {
             placesAdapter?.updateBusinesses(it)
         })
-        viewModel.isShowingYelpQlDataSource.observe(viewLifecycleOwner, Observer {
+        viewModel.updatePagingDataLiveData.observe(viewLifecycleOwner, Observer {
+            yelpPagingAdapter!!.submitData(lifecycle, it)
+        })
+        viewModel.isShowingYelpQlLiveDataSource.observe(viewLifecycleOwner, Observer {
             if (it) {
                 binding?.list?.adapter = yelpPagingAdapter
                 binding?.fab?.text = requireActivity().getString(R.string.load_places_api)
@@ -85,5 +75,10 @@ class PlacesFragment : Fragment() {
                 binding?.fab?.text = requireActivity().getString(R.string.load_yelp_api)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.initLoadFromDataSource()
     }
 }
